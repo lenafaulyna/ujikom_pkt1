@@ -1,20 +1,23 @@
 <?php
-// Include file konfigurasi database
+// Sambungkan ke database
 include '../config/database.php';
 
-// Tangkap inputan dari AJAX
-$query = $_POST['query'];
+// Ambil data yang dikirim dari input pencarian
+$query = $_GET['term'];
 
-// Query pencarian anggota berdasarkan nama
-$sql = "SELECT * FROM anggota WHERE nama_anggota LIKE '%$query%'";
+// Query pencarian anggota berdasarkan informasi dari tabel peminjaman
+$sql = "SELECT DISTINCT nama_anggota FROM peminjaman 
+        INNER JOIN anggota ON peminjaman.kode_anggota = anggota.kode_anggota 
+        WHERE anggota.nama_anggota LIKE '%".$query."%'";
+
 $result = mysqli_query($kon, $sql);
 
-// Membuat daftar hasil pencarian
-if(mysqli_num_rows($result) > 0) {
-    while($row = mysqli_fetch_assoc($result)) {
-        echo '<a href="#" class="list-group-item list-group-item-action">' . $row['nama_anggota'] . '</a>';
-    }
-} else {
-    echo '<p class="list-group-item">Tidak ditemukan anggota dengan nama tersebut.</p>';
+// Simpan hasil pencarian dalam array
+$data = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    array_push($data, $row['nama_anggota']);
 }
+
+// Mengembalikan hasil pencarian dalam format JSON
+echo json_encode($data);
 ?>

@@ -298,38 +298,15 @@
         });
     });
     
-    $(document).ready(function() {
-    // Fungsi untuk menangani klik pada item hasil pencarian anggota
-    $(document).on('click', '.list-group-item-action', function() {
-        // Ambil teks dari item yang diklik
-        var selectedAnggota = $(this).text().trim();
-        // Masukkan teks anggota ke dalam input nama anggota
-        $('#nama_anggota').val(selectedAnggota);
-        // Kosongkan hasil pencarian
-        $('#nama_anggota_result').html('');
-    });
-
-    // Fungsi untuk mengirim pencarian anggota saat input diubah
-    $('#nama_anggota').on('input', function() {
-        var anggota = $(this).val();
-        // Kirim permintaan pencarian ke server
-        $.ajax({
-            url: 'search_anggota.php', // Sesuaikan dengan URL yang benar
-            type: 'POST',
-            data: { query: anggota }, // Kirim query pencarian sebagai data
-            success: function(response) {
-                $('#nama_anggota_result').html(response); // Tampilkan hasil pencarian
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-            }
-        });
+    $(function() {
+    $("#nama_anggota").autocomplete({
+        source: 'search_anggota.php', // Ganti dengan URL yang sesuai untuk skrip PHP pencarian
+        select: function(event, ui) {
+            $('#nama_anggota').val(ui.item.label);
+            return false;
+        }
     });
 });
-
-
-
-
     
 </script>
 
